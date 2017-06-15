@@ -1,0 +1,1 @@
+opencv_createsamples -img os.path.join("pos", img) -bg neg/negatives.txt -info train/roi.txt -num 128 -maxxangle 0.0 -maxyangle 0.0 -show -maxzangle 0.3 -bgcolor 255 -bgthresh 8 -w 40 -h 40
