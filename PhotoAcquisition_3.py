@@ -45,6 +45,9 @@ def video_feed(args):
         # exit the camera loop prematurely with the q key
         if cv2.waitKey(1) & 0xFF == ord('q'):
             loop = False
+        if cv2.waitKey(1) & 0xFF == ord('p'):  # pause
+            print('p')
+            cv2.waitKey(-1)  # wait until press again
         # Capture frame-by-frame
         ret, frame = cap.read()
         # print requested pose
