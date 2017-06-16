@@ -16,12 +16,6 @@ def ready_save():
     save = True
 
 
-def change_class(photo_interval):
-    # schedule the next photo shoot
-    threading.Timer(photo_interval, ready_save).start()
-    return
-
-
 def video_feed(args):
     global save
     face_cascade = ""
@@ -32,7 +26,6 @@ def video_feed(args):
             raise ValueError('har cascade directory is not valid')
     cnt = 0
     lbl = 0
-    loop = True
     cap = cv2.VideoCapture(0)
     screen_txt = '%s : %s / %s' % (args.labels[lbl], cnt+1, args.number_of_samples)
 
@@ -41,19 +34,22 @@ def video_feed(args):
     # web camera warm up
     time.sleep(2)
     # run the camera loop
-    while (loop):
+    while True:
         # exit the camera loop prematurely with the q key
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            loop = False
+            break
         if cv2.waitKey(1) & 0xFF == ord('p'):  # pause
             print('p')
             cv2.waitKey(-1)  # wait until press again
+
+        screen_txt = '%s : %s / %s' % (args.labels[lbl], cnt + 1, args.number_of_samples)
+
         # Capture frame-by-frame
         ret, frame = cap.read()
         # print requested pose
         no_text_frame = copy.copy(frame)
         cv2.rectangle(frame, (0, 0), (720, 50), (255, 255, 255), -1)
-        cv2.putText(frame, screen_txt, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 0))
+        cv2.putText(frame, screen_txt, (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0))
         cv2.imshow('frame', frame)
 
         if save:
@@ -87,7 +83,6 @@ def video_feed(args):
                 print(photo_output_directory_raw)
             save = False
             cnt = cnt + 1
-            screen_txt = '%s : %s / %s' % (args.labels[lbl], cnt + 1, args.number_of_samples)
 
             # when all samples are taken, move to the next label and start from the first sample
             if cnt == args.number_of_samples:
@@ -96,8 +91,12 @@ def video_feed(args):
                 if lbl == len(args.labels):
                     break  # exits the while loop
                 else:
-                    screen_txt = 'NEW class:%s' % (args.labels[lbl])
-                    threading.Timer(args.photo_interval, change_class, args=[args.photo_interval]).start()
+                    screen_txt = 'NEW class:%s. Press anykey' % (args.labels[lbl])
+                    cv2.rectangle(frame, (0, 0), (720, 50), (255, 255, 255), -1)
+                    cv2.putText(frame, screen_txt, (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0))
+                    cv2.imshow('frame', frame)
+                    cv2.waitKey(-1)
+                    threading.Timer(args.photo_interval, ready_save).start()
 
                 cnt = 0
             else:
