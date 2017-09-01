@@ -1,3 +1,8 @@
+This program uses a web camera to gather pictures, and trains a Convulted Nearual Network to perform image recognition.
+
+I did this project in order to learn how to use Googles Tensorflow.
+
+---
 # 画像認識
 # 日本語
 
